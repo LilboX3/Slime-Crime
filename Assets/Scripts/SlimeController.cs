@@ -20,7 +20,7 @@ public class SlimeController : MonoBehaviour
     private float currentLaserLength;
 
     private float currentJumpForce;
-    private Rigidbody rigidbody;
+    private Rigidbody rb;
     private Animator animator;
     private Vector3 jumpDirection;
     private bool isGrounded;
@@ -28,7 +28,7 @@ public class SlimeController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         currentJumpForce = minJumpForce;
         directionRenderer.enabled = false;
@@ -38,7 +38,6 @@ public class SlimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("current jump force: " + currentJumpForce);
         if (Input.GetButton("Jump") && isGrounded)
         {
             currentJumpForce += chargeSpeed * Time.deltaTime;
@@ -55,8 +54,8 @@ public class SlimeController : MonoBehaviour
         }
         if (Input.GetButtonUp("Jump") && isGrounded)
         {
-            rigidbody.AddForce(Vector3.up * currentJumpForce, ForceMode.Impulse);
-            rigidbody.AddForce(jumpDirection, ForceMode.Impulse); 
+            rb.AddForce(Vector3.up * currentJumpForce, ForceMode.Impulse);
+            rb.AddForce(jumpDirection, ForceMode.Impulse); 
 
             directionRenderer.enabled = false;
             isGrounded = false;
