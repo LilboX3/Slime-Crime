@@ -9,14 +9,14 @@ public class SlimeController : MonoBehaviour
     [SerializeField]
     private float maxJumpForce = 6f;
     [SerializeField]
-    private float chargeSpeed = 1f;
+    private float chargeSpeed = 4f;
 
     [SerializeField]
     private LineRenderer directionRenderer;
     [SerializeField]
     private float laserWidth = 0.1f;
     [SerializeField]
-    private float laserStartLength = 5f;
+    private float laserStartLength = 0.5f;
     private float currentLaserLength;
     [SerializeField]
     private float directionModifierSpeed = 0.1f;
@@ -69,7 +69,7 @@ public class SlimeController : MonoBehaviour
             if (jumpDirection != Vector3.zero) //Rotate slime in jumpdirection
             {
                 Quaternion toRotation = Quaternion.LookRotation(jumpDirection, Vector3.up);
-                transform.rotation = toRotation;
+                transform.GetChild(0).rotation = toRotation;
             }
 
             directionRenderer.enabled = false;
@@ -79,8 +79,6 @@ public class SlimeController : MonoBehaviour
             currentLaserLength = laserStartLength;
             currentDirectionModifier = 1;
         }
-        Debug.Log("Line vector: " + directionRenderer.GetPosition(1).ToString());
-        Debug.Log("Jump direction: " + jumpDirection.ToString());
     }
 
     private void OnCollisionEnter(Collision collision)
