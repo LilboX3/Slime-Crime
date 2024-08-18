@@ -18,8 +18,13 @@ public class SlimeController : MonoBehaviour
     [SerializeField]
     private float laserStartLength = 5f;
     private float currentLaserLength;
+    [SerializeField]
+    private float directionModifierSpeed = 0.1f;
+    [SerializeField]
+    private float maxDirectionModifier = 2f;
 
     private float currentJumpForce;
+    private float currentDirectionModifier;
     private Rigidbody rb;
     private Animator animator;
     private Vector3 jumpDirection;
@@ -33,6 +38,7 @@ public class SlimeController : MonoBehaviour
         currentJumpForce = minJumpForce;
         directionRenderer.enabled = false;
         directionRenderer.startWidth = laserWidth;
+        currentDirectionModifier = 1;
     }
 
     // Update is called once per frame
@@ -42,27 +48,39 @@ public class SlimeController : MonoBehaviour
         {
             currentJumpForce += chargeSpeed * Time.deltaTime;
             currentLaserLength += chargeSpeed * Time.deltaTime;
+            currentDirectionModifier += directionModifierSpeed * Time.deltaTime;
+
             currentJumpForce = Mathf.Clamp(currentJumpForce, minJumpForce, maxJumpForce); //Wert begrenzen zwischen min und maxForce
-            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxJumpForce); //tweak to represent distance to jumo
+            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxJumpForce); //tweak to represent distance to jump
+            currentDirectionModifier = Mathf.Clamp(currentDirectionModifier, 1, maxDirectionModifier);
 
             float horizontalInput = Input.GetAxis("Joystick horizontal");
             float verticalInput = Input.GetAxis("Joystick vertical");
             jumpDirection = new Vector3(horizontalInput, 0, -verticalInput).normalized;
 
-            directionRenderer.SetPosition(1, jumpDirection * currentLaserLength);
+            directionRenderer.SetPosition(1, jumpDirection * (currentLaserLength/4));
             directionRenderer.enabled = true;
         }
         if (Input.GetButtonUp("Jump") && isGrounded)
         {
             rb.AddForce(Vector3.up * currentJumpForce, ForceMode.Impulse);
-            rb.AddForce(jumpDirection, ForceMode.Impulse); 
+            rb.AddForce(jumpDirection * currentDirectionModifier, ForceMode.Impulse);
+
+            if (jumpDirection != Vector3.zero) //Rotate slime in jumpdirection
+            {
+                Quaternion toRotation = Quaternion.LookRotation(jumpDirection, Vector3.up);
+                transform.rotation = toRotation;
+            }
 
             directionRenderer.enabled = false;
             isGrounded = false;
             //reset fórce
             currentJumpForce = minJumpForce;
             currentLaserLength = laserStartLength;
+            currentDirectionModifier = 1;
         }
+        Debug.Log("Line vector: " + directionRenderer.GetPosition(1).ToString());
+        Debug.Log("Jump direction: " + jumpDirection.ToString());
     }
 
     private void OnCollisionEnter(Collision collision)
