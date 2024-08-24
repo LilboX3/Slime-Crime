@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SlimeController : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class SlimeController : MonoBehaviour
     private float currentDirectionModifier;
     private Rigidbody rb;
     private Animator animator;
+    private Transform floorIndicator;
+    private Transform slimeObject;
     private Vector3 jumpDirection;
     private bool isGrounded;
 
@@ -35,6 +38,8 @@ public class SlimeController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        floorIndicator = gameObject.transform.GetChild(2);
+        slimeObject = gameObject.transform.GetChild(0);
         currentJumpForce = minJumpForce;
         directionRenderer.enabled = false;
         directionRenderer.startWidth = laserWidth;
@@ -79,6 +84,23 @@ public class SlimeController : MonoBehaviour
             currentJumpForce = minJumpForce;
             currentLaserLength = laserStartLength;
             currentDirectionModifier = 1;
+        }
+        DrawFloorIndicator();
+    }
+
+    void DrawFloorIndicator()
+    {
+        Vector3 origin = slimeObject.position;
+        Vector3 direction = Vector3.down;
+        RaycastHit hit;
+        float maxDistance = 100f;
+
+        if (Physics.Raycast(origin, direction, out hit, maxDistance))
+        {
+            Vector3 hitPosition = hit.point;
+            floorIndicator.position = hitPosition;
+            Debug.DrawLine(origin, hitPosition, Color.red);
+            Debug.Log("Hit position: " + hitPosition);
         }
     }
 
