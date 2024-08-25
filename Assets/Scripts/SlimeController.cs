@@ -23,6 +23,7 @@ public class SlimeController : MonoBehaviour
     private float directionModifierSpeed = 0.1f;
     [SerializeField]
     private float maxDirectionModifier = 2f;
+    public int score = 0;
 
     private float currentJumpForce;
     private float currentDirectionModifier;
@@ -56,7 +57,7 @@ public class SlimeController : MonoBehaviour
             currentDirectionModifier += directionModifierSpeed * Time.deltaTime;
 
             currentJumpForce = Mathf.Clamp(currentJumpForce, minJumpForce, maxJumpForce); //Wert begrenzen zwischen min und maxForce
-            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxJumpForce); //tweak to represent distance to jump
+            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxDirectionModifier); //tweak to represent distance to jump
             currentDirectionModifier = Mathf.Clamp(currentDirectionModifier, 1, maxDirectionModifier);
 
             float horizontalInput = Input.GetAxis("Joystick horizontal");
@@ -64,7 +65,7 @@ public class SlimeController : MonoBehaviour
             jumpDirection = new Vector3(-horizontalInput, 0, verticalInput).normalized;
 
             Vector3 lineDirection = new Vector3(horizontalInput, 0, -verticalInput).normalized;
-            directionRenderer.SetPosition(1, lineDirection * (currentLaserLength/5)); //tweak to match distance jumped?
+            directionRenderer.SetPosition(1, lineDirection * (currentLaserLength/2)); //tweak to match distance jumped?
             directionRenderer.enabled = true;
         }
         if (Input.GetButtonUp("Jump") && isGrounded)
@@ -104,6 +105,12 @@ public class SlimeController : MonoBehaviour
         }
     }
 
+    public void AddPoints(int amount)
+    {
+        score += amount;
+    }
+
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.layer == 6) //check if ground was hit
@@ -111,4 +118,5 @@ public class SlimeController : MonoBehaviour
             isGrounded = true;
         }
     }
+    
 }
