@@ -34,7 +34,7 @@ public class CashController : MonoBehaviour
             slimeController = other.gameObject.GetComponentInParent<SlimeController>();
             slimeController.AddPoints(scoreAmount);
             particles.Play();
-            StartCoroutine(DestroyAfterSeconds(0.35f));
+            StartCoroutine(DestroyAfterSeconds(0.4f));
         }
     }
 
