@@ -11,6 +11,8 @@ public class SlimeController : MonoBehaviour
     private float maxJumpForce = 6f;
     [SerializeField]
     private float chargeSpeed = 4f;
+    [SerializeField]
+    private int health = 3;
 
     [SerializeField]
     private LineRenderer directionRenderer;
@@ -20,9 +22,9 @@ public class SlimeController : MonoBehaviour
     private float laserStartLength = 0.5f;
     private float currentLaserLength;
     [SerializeField]
-    private float directionModifierSpeed = 0.1f;
+    private float directionModifierSpeed = 1.5f;
     [SerializeField]
-    private float maxDirectionModifier = 2f;
+    private float maxDirectionModifier = 3f;
     public int score = 0;
 
     private float currentJumpForce;
@@ -50,14 +52,15 @@ public class SlimeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //TODO: make charge look faster ...?
         if (Input.GetButton("Jump") && isGrounded)
         {
             currentJumpForce += chargeSpeed * Time.deltaTime;
-            currentLaserLength += chargeSpeed * Time.deltaTime;
+            currentLaserLength += directionModifierSpeed * Time.deltaTime;
             currentDirectionModifier += directionModifierSpeed * Time.deltaTime;
 
             currentJumpForce = Mathf.Clamp(currentJumpForce, minJumpForce, maxJumpForce); //Wert begrenzen zwischen min und maxForce
-            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxDirectionModifier); //tweak to represent distance to jump
+            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxDirectionModifier);
             currentDirectionModifier = Mathf.Clamp(currentDirectionModifier, 1, maxDirectionModifier);
 
             float horizontalInput = Input.GetAxis("Joystick horizontal");
@@ -65,7 +68,7 @@ public class SlimeController : MonoBehaviour
             jumpDirection = new Vector3(-horizontalInput, 0, verticalInput).normalized;
 
             Vector3 lineDirection = new Vector3(horizontalInput, 0, -verticalInput).normalized;
-            directionRenderer.SetPosition(1, lineDirection * (currentLaserLength/2)); //tweak to match distance jumped?
+            directionRenderer.SetPosition(1, lineDirection * (currentLaserLength/3)); //tweak to match distance jumped?
             directionRenderer.enabled = true;
         }
         if (Input.GetButtonUp("Jump") && isGrounded)
@@ -100,16 +103,27 @@ public class SlimeController : MonoBehaviour
         {
             Vector3 hitPosition = hit.point;
             floorIndicator.position = hitPosition;
-            Debug.DrawLine(origin, hitPosition, Color.red);
-            Debug.Log("Hit position: " + hitPosition);
         }
     }
 
     public void AddPoints(int amount)
     {
         score += amount;
+        if(health <= 0)
+        {
+            Die();
+        }
     }
 
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+    }
+
+    public void Die()
+    {
+
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
