@@ -25,103 +25,117 @@ public class SlimeController : MonoBehaviour
     private float directionModifierSpeed = 1.5f;
     [SerializeField]
     private float maxDirectionModifier = 3f;
-    public int score = 0;
+    [SerializeField]
+    private List<Transform> respawnPoints = new List<Transform>();
+    [SerializeField]
+    private GameObject gameManager;
+
+    private int score = 0;
 
     private float currentJumpForce;
     private float currentDirectionModifier;
     private Rigidbody rb;
     private Animator animator;
-    private Transform floorIndicator;
     private Transform slimeObject;
     private Vector3 jumpDirection;
+    private GameManager gameManagerScript;
     private bool isGrounded;
+    private bool canTakeDamage = true;
+
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        floorIndicator = gameObject.transform.GetChild(2);
         slimeObject = gameObject.transform.GetChild(0);
         currentJumpForce = minJumpForce;
         directionRenderer.enabled = false;
         directionRenderer.startWidth = laserWidth;
         currentDirectionModifier = 1;
+        gameManagerScript = gameManager.GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //TODO: make charge look faster ...?
         if (Input.GetButton("Jump") && isGrounded)
         {
-            currentJumpForce += chargeSpeed * Time.deltaTime;
-            currentLaserLength += directionModifierSpeed * Time.deltaTime;
-            currentDirectionModifier += directionModifierSpeed * Time.deltaTime;
-
-            currentJumpForce = Mathf.Clamp(currentJumpForce, minJumpForce, maxJumpForce); //Wert begrenzen zwischen min und maxForce
-            currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxDirectionModifier);
-            currentDirectionModifier = Mathf.Clamp(currentDirectionModifier, 1, maxDirectionModifier);
-
-            float horizontalInput = Input.GetAxis("Joystick horizontal");
-            float verticalInput = Input.GetAxis("Joystick vertical");
-            jumpDirection = new Vector3(-horizontalInput, 0, verticalInput).normalized;
-
-            Vector3 lineDirection = new Vector3(horizontalInput, 0, -verticalInput).normalized;
-            directionRenderer.SetPosition(1, lineDirection * (currentLaserLength/3)); //tweak to match distance jumped?
-            directionRenderer.enabled = true;
+            ChargeJump();
         }
         if (Input.GetButtonUp("Jump") && isGrounded)
         {
-            rb.AddForce(Vector3.up * currentJumpForce, ForceMode.Impulse);
-            rb.AddForce(jumpDirection * currentDirectionModifier, ForceMode.Impulse);
-
-            if (jumpDirection != Vector3.zero) //Rotate slime in jumpdirection
-            {
-                Quaternion toRotation = Quaternion.LookRotation(jumpDirection, Vector3.up);
-                transform.GetChild(0).rotation = toRotation;
-            }
-
-            directionRenderer.enabled = false;
-            isGrounded = false;
-            //reset fórce
-            currentJumpForce = minJumpForce;
-            currentLaserLength = laserStartLength;
-            currentDirectionModifier = 1;
+            ReleaseJump();
         }
-        DrawFloorIndicator();
     }
 
-    void DrawFloorIndicator()
+    private void ChargeJump()
     {
-        Vector3 origin = slimeObject.position;
-        Vector3 direction = Vector3.down;
-        RaycastHit hit;
-        float maxDistance = 100f;
+        currentJumpForce += chargeSpeed * Time.deltaTime;
+        currentLaserLength += directionModifierSpeed * Time.deltaTime;
+        currentDirectionModifier += directionModifierSpeed * Time.deltaTime;
 
-        if (Physics.Raycast(origin, direction, out hit, maxDistance))
+        currentJumpForce = Mathf.Clamp(currentJumpForce, minJumpForce, maxJumpForce); //Wert begrenzen zwischen min und maxForce
+        currentLaserLength = Mathf.Clamp(currentLaserLength, laserStartLength, maxDirectionModifier);
+        currentDirectionModifier = Mathf.Clamp(currentDirectionModifier, 1, maxDirectionModifier);
+
+        float horizontalInput = Input.GetAxis("Joystick horizontal");
+        float verticalInput = Input.GetAxis("Joystick vertical");
+        jumpDirection = new Vector3(-horizontalInput, 0, verticalInput).normalized;
+
+        Vector3 lineDirection = new Vector3(horizontalInput, 0, -verticalInput).normalized;
+        directionRenderer.SetPosition(1, lineDirection * (currentLaserLength / 2)); //tweak to match distance jumped?
+        directionRenderer.enabled = true;
+    }
+
+    private void ReleaseJump()
+    {
+        rb.AddForce(Vector3.up * currentJumpForce, ForceMode.Impulse);
+        rb.AddForce(jumpDirection * currentDirectionModifier, ForceMode.Impulse);
+
+        if (jumpDirection != Vector3.zero) //Rotate slime in jumpdirection
         {
-            Vector3 hitPosition = hit.point;
-            floorIndicator.position = hitPosition;
+            Quaternion toRotation = Quaternion.LookRotation(jumpDirection, Vector3.up);
+            transform.GetChild(0).rotation = toRotation;
         }
+
+        directionRenderer.enabled = false;
+        isGrounded = false;
+        //reset fórce
+        currentJumpForce = minJumpForce;
+        currentLaserLength = laserStartLength;
+        currentDirectionModifier = 1;
     }
 
     public void AddPoints(int amount)
     {
         score += amount;
-        if(health <= 0)
-        {
-            Die();
-        }
+        gameManagerScript.UpdateScore(score);
     }
 
     public void TakeDamage(int damage)
     {
-        health -= damage;
+        if (canTakeDamage)
+        {
+            gameManagerScript.DisplayHealth(health);
+            health -= damage;
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
     }
 
     public void Die()
     {
+        gameManagerScript.EndGame();
+    }
+      
+    IEnumerator InvincibilityFrame(float seconds)
+    {
+        canTakeDamage = false;
+        yield return new WaitForSeconds(seconds);
+        canTakeDamage = true;
 
     }
 
@@ -131,6 +145,20 @@ public class SlimeController : MonoBehaviour
         {
             isGrounded = true;
         }
+        if (collision.gameObject.CompareTag("Trap"))
+        {
+            TakeDamage(1);
+            StartCoroutine(InvincibilityFrame(1.0f));
+        }
     }
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Ocean"))
+        {
+            transform.position = respawnPoints[Random.Range(0, respawnPoints.Count)].position;
+            TakeDamage(1);
+        }
+    }
+
 }

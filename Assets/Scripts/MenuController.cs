@@ -15,4 +15,12 @@ public class MenuController : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+    public void ReloadLevel()
+    {
+        SceneManager.LoadScene(3);
+        Time.timeScale = 1;
+    }
+
+
 }

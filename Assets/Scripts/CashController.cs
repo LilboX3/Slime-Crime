@@ -28,7 +28,6 @@ public class CashController : MonoBehaviour
 
     void OnTriggerEnter(UnityEngine.Collider other)
     {
-        Debug.Log("collided a: "+other.gameObject.name);
         if (other.gameObject.CompareTag("Player"))
         {
             slimeController = other.gameObject.GetComponentInParent<SlimeController>();
