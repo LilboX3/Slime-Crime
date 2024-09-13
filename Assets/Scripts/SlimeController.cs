@@ -30,6 +30,12 @@ public class SlimeController : MonoBehaviour
     [SerializeField]
     private GameObject gameManager;
 
+    [SerializeField]
+    private AudioClip jumpSound;
+    [SerializeField]
+    private AudioClip damagedSound;
+    private AudioSource audioSource;
+
     private int score = 0;
 
     private float currentJumpForce;
@@ -54,6 +60,9 @@ public class SlimeController : MonoBehaviour
         directionRenderer.startWidth = laserWidth;
         currentDirectionModifier = 1;
         gameManagerScript = gameManager.GetComponent<GameManager>();
+        audioSource = gameObject.GetComponent<AudioSource>();
+
+        transform.position = respawnPoints[Random.Range(0, respawnPoints.Count)].position;
     }
 
     // Update is called once per frame
@@ -66,6 +75,7 @@ public class SlimeController : MonoBehaviour
         if (Input.GetButtonUp("Jump") && isGrounded)
         {
             ReleaseJump();
+            audioSource.PlayOneShot(jumpSound);
         }
     }
 
@@ -117,6 +127,7 @@ public class SlimeController : MonoBehaviour
     {
         if (canTakeDamage)
         {
+            audioSource.PlayOneShot(damagedSound);
             gameManagerScript.DisplayHealth(health);
             health -= damage;
             if (health <= 0)
@@ -148,7 +159,7 @@ public class SlimeController : MonoBehaviour
         if (collision.gameObject.CompareTag("Trap"))
         {
             TakeDamage(1);
-            StartCoroutine(InvincibilityFrame(1.0f));
+            StartCoroutine(InvincibilityFrame(2.0f));
         }
     }
 

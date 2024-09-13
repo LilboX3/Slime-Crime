@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI scoreText;
     [SerializeField]
     private List<Image> hearts;
+    [SerializeField]
+    private AudioSource audioSource;
 
     private float secondsLeft;
     private int totalScore;
@@ -55,6 +57,7 @@ public class GameManager : MonoBehaviour
         pauseIcon.SetActive(true);
         playIcon.SetActive(false);
         Time.timeScale = 1;
+        audioSource.Play();
     }
 
     public void OpenPauseMenu()
@@ -63,6 +66,7 @@ public class GameManager : MonoBehaviour
         pauseIcon.SetActive(false);
         playIcon.SetActive(true);
         Time.timeScale = 0;
+        audioSource.Pause();
     }
     public void UpdateScore(int score)
     {
