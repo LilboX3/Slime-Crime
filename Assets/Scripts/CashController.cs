@@ -6,6 +6,10 @@ public class CashController : MonoBehaviour
 {
     [SerializeField]
     private int scoreAmount;
+    [SerializeField]
+    private AudioClip collectionSound;
+
+    private AudioSource audioSource;
     private ParticleSystem particles;
     private SlimeController slimeController;
 
@@ -13,6 +17,7 @@ public class CashController : MonoBehaviour
     void Start()
     {
         particles = GetComponentInChildren<ParticleSystem>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -33,6 +38,7 @@ public class CashController : MonoBehaviour
             slimeController = other.gameObject.GetComponentInParent<SlimeController>();
             slimeController.AddPoints(scoreAmount);
             particles.Play();
+            audioSource.PlayOneShot(collectionSound);
             StartCoroutine(DestroyAfterSeconds(0.4f));
         }
     }

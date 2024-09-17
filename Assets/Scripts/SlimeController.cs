@@ -31,9 +31,11 @@ public class SlimeController : MonoBehaviour
     private GameObject gameManager;
 
     [SerializeField]
-    private AudioClip jumpSound;
+    private List<AudioClip> jumpSounds = new List<AudioClip>();
     [SerializeField]
     private AudioClip damagedSound;
+    [SerializeField]
+    private bool isInTutorial = false;
     private AudioSource audioSource;
 
     private int score = 0;
@@ -59,11 +61,15 @@ public class SlimeController : MonoBehaviour
         directionRenderer.enabled = false;
         directionRenderer.startWidth = laserWidth;
         currentDirectionModifier = 1;
-        gameManagerScript = gameManager.GetComponent<GameManager>();
+        
         audioSource = gameObject.GetComponent<AudioSource>();
-
-        transform.position = respawnPoints[Random.Range(0, respawnPoints.Count)].position;
+        if (!isInTutorial)
+        {
+            gameManagerScript = gameManager.GetComponent<GameManager>();
+            transform.position = respawnPoints[Random.Range(0, respawnPoints.Count)].position;
+        }
     }
+        
 
     // Update is called once per frame
     void Update()
@@ -75,7 +81,7 @@ public class SlimeController : MonoBehaviour
         if (Input.GetButtonUp("Jump") && isGrounded)
         {
             ReleaseJump();
-            audioSource.PlayOneShot(jumpSound);
+            audioSource.PlayOneShot(jumpSounds[Random.Range(0, jumpSounds.Count)]);
         }
     }
 
