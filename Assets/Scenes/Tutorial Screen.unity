@@ -1518,8 +1518,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press "A" , release in a direction with your joystick to shoot the slime
-    like a slingshot!
+  m_text: Press "A"  in a direction with your joystick & release to shoot like a
+    slingshot!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9dbb84840e460074b986d4195860dc89, type: 2}
   m_sharedMaterial: {fileID: -2129066928964317312, guid: 9dbb84840e460074b986d4195860dc89, type: 2}

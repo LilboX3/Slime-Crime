@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f4dab47929603428914a07aeaf23a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreAmount: 50
+  scoreAmount: 200
   collectionSound: {fileID: 8300000, guid: 88598df606d2e4a47bba0ec9513cfa55, type: 3}
 --- !u!65 &3522940887704094176
 BoxCollider:

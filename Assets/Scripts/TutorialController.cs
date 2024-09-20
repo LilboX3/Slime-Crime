@@ -46,7 +46,7 @@ public class TutorialController : MonoBehaviour
             case 2:
                 trapsVideo.SetActive(false);
                 worldViewVideo.SetActive(true);
-                tutorialText.text = "~Score calculation~\nDiamonds: 500 points\n Gold: 50 points\nCash: 10 points";
+                tutorialText.text = "~Score calculation~\nDiamonds: 500 points\n Gold: 200 points\nCash: 50 points";
                 break;
             case 3:
                 tutorialText.text = "Good luck becoming the richest slime in the world!";

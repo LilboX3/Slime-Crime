@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static int endScore = 0;
+        
     [SerializeField]
     private GameObject pauseMenu;
     [SerializeField]
@@ -80,6 +82,8 @@ public class GameManager : MonoBehaviour
     }
     public void EndGame()
     {
-        Debug.Log("You had a total of: " + totalScore);
+        endScore = totalScore;
+        Debug.Log("You had a total of: " + endScore);
+        SceneManager.LoadScene(4); //Go to end score screen
     }
 }

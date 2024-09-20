@@ -173,8 +173,11 @@ public class SlimeController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Ocean"))
         {
-            transform.position = respawnPoints[Random.Range(0, respawnPoints.Count)].position;
             TakeDamage(1);
+            if(!(health <= 0))
+            {
+                transform.position = respawnPoints[Random.Range(0, respawnPoints.Count)].position;
+            }
         }
     }
 
