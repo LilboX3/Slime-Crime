@@ -9,6 +9,8 @@ public class FinalScoreController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI scoreText;
     [SerializeField]
+    private TextMeshProUGUI levelText;
+    [SerializeField]
     private Sprite[] scoreImages;
     [SerializeField]
     private Image finalImage;
@@ -39,26 +41,32 @@ public class FinalScoreController : MonoBehaviour
             case >= 10000:
                 finalImage.sprite = scoreImages[5];
                 audioSource.PlayOneShot(soundEffects[2]);
+                levelText.text = "Level 10000 Mafia Boss";
                 break;
             case >= 3500:
                 finalImage.sprite = scoreImages[4];
                 audioSource.PlayOneShot(soundEffects[2]);
+                levelText.text = "Level 500 Millionaire";
                 break;
             case >= 3000:
                 finalImage.sprite = scoreImages[3];
                 audioSource.PlayOneShot(soundEffects[1]);
+                levelText.text = "Level 100 Gangster";
                 break;
             case >= 2500:
                 finalImage.sprite = scoreImages[2];
                 audioSource.PlayOneShot(soundEffects[1]);
+                levelText.text = "Level 10 Goon";
                 break;
             case >= 1500:
                 finalImage.sprite = scoreImages[1];
                 audioSource.PlayOneShot(soundEffects[1]);
+                levelText.text = "Level 5 Rookie Thief";
                 break;
             default:
                 finalImage.sprite = scoreImages[0];
                 audioSource.PlayOneShot(soundEffects[0]);
+                levelText.text = "Level 1 Peasant";
                 break;
         }
     }

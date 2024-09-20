@@ -39,7 +39,7 @@ public class CashController : MonoBehaviour
             slimeController.AddPoints(scoreAmount);
             particles.Play();
             audioSource.PlayOneShot(collectionSound);
-            StartCoroutine(DestroyAfterSeconds(0.4f));
+            StartCoroutine(DestroyAfterSeconds(0.5f));
         }
     }
 
