@@ -43,12 +43,12 @@ public class FinalScoreController : MonoBehaviour
                 audioSource.PlayOneShot(soundEffects[2]);
                 levelText.text = "Level 10000 Mafia Boss";
                 break;
-            case >= 3500:
+            case >= 5000:
                 finalImage.sprite = scoreImages[4];
                 audioSource.PlayOneShot(soundEffects[2]);
                 levelText.text = "Level 500 Millionaire";
                 break;
-            case >= 3000:
+            case >= 3500:
                 finalImage.sprite = scoreImages[3];
                 audioSource.PlayOneShot(soundEffects[1]);
                 levelText.text = "Level 100 Gangster";
@@ -69,6 +69,7 @@ public class FinalScoreController : MonoBehaviour
                 levelText.text = "Level 1 Peasant";
                 break;
         }
+        finalImage.color = Color.white;
     }
 
     private void AddDotToText()
