@@ -14,7 +14,7 @@ public class SpikeRoller : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.velocity = Vector3.right * rollSpeed;
+        rb.linearVelocity = Vector3.right * rollSpeed;
         allowedToMove = true;
     }
 
@@ -24,16 +24,16 @@ public class SpikeRoller : MonoBehaviour
         {
             if (movingForward)
             {
-                rb.velocity = Vector3.right * rollSpeed;
+                rb.linearVelocity = Vector3.right * rollSpeed;
             }
             else
             {
-                rb.velocity = Vector3.left * rollSpeed;
+                rb.linearVelocity = Vector3.left * rollSpeed;
             }
         } 
         else
         {
-            rb.velocity = Vector3.zero;
+            rb.linearVelocity = Vector3.zero;
         }
     }
 
